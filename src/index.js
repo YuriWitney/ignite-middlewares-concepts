@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { notFoundUser } = require('./utils/http-helper')
-const { findUser, isUserNotFound } = require('./utils/middleware-util')
+const { findUser, isUserNotFound, findUserByUsername } = require('./utils/middleware-util')
 
 const { v4: uuidv4, validate } = require('uuid');
 
@@ -14,8 +14,9 @@ const users = [];
 function checksExistsUserAccount(request, response, next) {
   const username = request.headers.username
 
-  if(users.some(user => user.username === username)) {
-    request.user = users.filter(user => user.username === username)[0]
+  const user = findUserByUsername(users, username)
+  if(user) {
+    request.user = user
     return next()
   }
 
