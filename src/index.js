@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const { notFoundUser } = require('./utils/http-helper')
-const { findUser, isUserNotFound, findUserByUsername } = require('./utils/middleware-util')
+const { notFoundUser, limitedPlan } = require('./utils/http-helper')
+const { findUser, isUserNotFound, findUserByUsername, isUserTodoListAvailable } = require('./utils/middleware-util')
 
 const { v4: uuidv4, validate } = require('uuid');
 
@@ -24,7 +24,13 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const user = request.user
+
+  if(isUserTodoListAvailable(user)) {
+    return next()
+  }
+
+  return limitedPlan(response)
 }
 
 function checksTodoExists(request, response, next) {
