@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const { notFoundUser, limitedPlan, invalidId, notFoundTodo } = require('./utils/http-helper')
+const { findUser, isUserNotFound, findUserByUsername, isUserTodoListAvailable } = require('./utils/middleware-util')
 
 const { v4: uuidv4, validate } = require('uuid');
 
@@ -10,19 +12,59 @@ app.use(cors());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const username = request.headers.username
+
+  const user = findUserByUsername(users, username)
+  if(user) {
+    request.user = user
+    return next()
+  }
+
+  return notFoundUser(response)
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const user = request.user
+
+  if(isUserTodoListAvailable(user)) {
+    return next()
+  }
+
+  return limitedPlan(response)
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const todoId = request.params.id
+  const username = request.headers.username
+
+  if(!validate(todoId)) {
+    return invalidId(response)
+  }
+
+  const user = findUserByUsername(users, username)
+  if(!user) {
+    return notFoundUser(response)
+  }
+
+  const todo = user.todos.filter(todo => todo.id === todoId)[0]
+  if(todo) {
+    request.user = user
+    request.todo = todo
+    return next()
+  }
+
+  return notFoundTodo(response)
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const userId = request.params.id
+
+  const user = findUser(users, userId)
+  if(isUserNotFound(user)) {
+    return notFoundUser(response)
+  }
+  request.user = user
+  return next()
 }
 
 app.post('/users', (request, response) => {
