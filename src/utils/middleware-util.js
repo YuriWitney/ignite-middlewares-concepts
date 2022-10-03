@@ -8,8 +8,8 @@ const findUserByUsername = (users, username) => {
   return users.filter(user => user.username === username)[0]
 }
 
-const isUserNotFound = (request) => {
-  return request.user === undefined
+const isUserNotFound = (user) => {
+  return user === undefined
 }
 
 const isUserAPro = (user) => {

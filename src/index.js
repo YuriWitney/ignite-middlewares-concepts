@@ -59,11 +59,11 @@ function checksTodoExists(request, response, next) {
 function findUserById(request, response, next) {
   const userId = request.params.id
 
-  request.user = findUser(users, userId)
-  if(isUserNotFound(request)) {
+  const user = findUser(users, userId)
+  if(isUserNotFound(user)) {
     return notFoundUser(response)
   }
-
+  request.user = user
   return next()
 }
 
