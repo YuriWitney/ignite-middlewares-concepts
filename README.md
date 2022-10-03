@@ -4,13 +4,7 @@
 
 Challenge 2 solution of ignite node route from [Rocketseat](https://app.rocketseat.com.br/) 
 
-# Summary
-
-- [Lessons viewed](#Lessons-Viewed)
-- [Techs](#Techs)
-- [References](#References)
-
-#Lessons Viewed
+# Lessons Viewed
 
 - Middewares configuration concepts
 - Request, response, next pattern behavior
