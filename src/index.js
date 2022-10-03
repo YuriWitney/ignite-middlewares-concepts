@@ -22,7 +22,13 @@ function checksTodoExists(request, response, next) {
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const userId = request.params.id
+
+  request.user = users.filter(user => user.id === userId)[0]
+  if(request.user === undefined) {
+    return response.status(404).json({ error: 'Usuário não encontrado!' })
+  }
+  return next()
 }
 
 app.post('/users', (request, response) => {
