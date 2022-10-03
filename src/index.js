@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { notFoundUser, limitedPlan } = require('./utils/http-helper')
+const { notFoundUser, limitedPlan, invalidId, notFoundTodo } = require('./utils/http-helper')
 const { findUser, isUserNotFound, findUserByUsername, isUserTodoListAvailable } = require('./utils/middleware-util')
 
 const { v4: uuidv4, validate } = require('uuid');
@@ -34,7 +34,26 @@ function checksCreateTodosUserAvailability(request, response, next) {
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const todoId = request.params.id
+  const username = request.headers.username
+
+  if(!validate(todoId)) {
+    return invalidId(response)
+  }
+
+  const user = findUserByUsername(users, username)
+  if(!user) {
+    return notFoundUser(response)
+  }
+
+  const todo = user.todos.filter(todo => todo.id === todoId)[0]
+  if(todo) {
+    request.user = user
+    request.todo = todo
+    return next()
+  }
+
+  return notFoundTodo(response)
 }
 
 function findUserById(request, response, next) {
