@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const { notFoundUser } = require('./utils/http-helper')
+const { findUser, isUserNotFound } = require('./utils/middleware-util')
 
 const { v4: uuidv4, validate } = require('uuid');
 
@@ -24,10 +26,11 @@ function checksTodoExists(request, response, next) {
 function findUserById(request, response, next) {
   const userId = request.params.id
 
-  request.user = users.filter(user => user.id === userId)[0]
-  if(request.user === undefined) {
-    return response.status(404).json({ error: 'Usuário não encontrado!' })
+  request.user = findUser(users, userId)
+  if(isUserNotFound(request)) {
+    return notFoundUser(response)
   }
+
   return next()
 }
 
